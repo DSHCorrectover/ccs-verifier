@@ -1,0 +1,24 @@
+{
+  "name": "ccs-verifier",
+  "version": "0.1.0",
+  "description": "CCS Verifier - Runtime Behavior Evidence verification for MCP servers. Implements RFC 9334 Remote Attestation concepts for AI Agent security.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "node --test dist/tests/**/*.test.js",
+    "pretest": "tsc"
+  },
+  "keywords": [
+    "mcp",
+    "security",
+    "attestation",
+    "rfc9334",
+    "runtime-behavior"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.19.43",
+    "typescript": "^5.4.0"
+  }
+}
