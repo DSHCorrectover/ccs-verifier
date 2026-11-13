@@ -2,13 +2,13 @@
 
 > **This repository has moved.**
 >
-> The canonical source is now at **[Correctover/ccs-verifier](https://github.com/Correctover/ccs-verifier)**.
+> The canonical source is now at **[Correctover/ccs-verifier](https://github.com/DSHCorrectover/ccs-verifier)**.
 >
 > This repository is kept as a redirect for old links (including the PyPI project URL). Please update your references.
 
 ## Links
 
-- **Canonical repository**: https://github.com/Correctover/ccs-verifier
+- **Canonical repository**: https://github.com/DSHCorrectover/ccs-verifier
 - **PyPI**: https://pypi.org/project/ccs-verifier/
 - **Conformance vectors**: https://github.com/DSHCorrectover/ccs-conformance-vectors
 - **IETF draft**: https://datatracker.ietf.org/doc/draft-correctover-ccs/
