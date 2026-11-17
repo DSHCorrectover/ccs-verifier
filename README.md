@@ -17,3 +17,9 @@
 ## CCS
 
 CCS (Correctover Conformance Shape) is a seven-dimension runtime verification standard for AI agent tool invocations. Every agent tool call produces a tamper-evident, cryptographically signed receipt (Ed25519 over JCS-canonicalized JSON).
+
+---
+
+**Commercial verification engagements** — post-migration authorization integrity assessment, court-ready dossier: [tiers & free sample](https://dshcorrectover.github.io/correctover-recovery-admission/services.html) · wangguigui@correctover.com
+
+*AI-assisted disclosure: this repository is maintained with AI assistance, reviewed by Guigui Wang.*
