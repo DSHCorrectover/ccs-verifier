@@ -1,0 +1,28 @@
+{
+  "name": "ccs-verifier",
+  "version": "1.6.0",
+  "description": "CCS Receipt independent verification \u2014 verify Ed25519-signed receipts (JCS canonical JSON) with one command; keys subgroup-property-checked",
+  "bin": {
+    "ccs-verifier": "cli.mjs"
+  },
+  "type": "module",
+  "main": "cli.mjs",
+  "files": [
+    "cli.mjs",
+    "propcheck.mjs",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "ccs",
+    "ed25519",
+    "receipt",
+    "verification",
+    "agent-security",
+    "correctover"
+  ],
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@noble/curves": "2.4.0"
+  }
+}
