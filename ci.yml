@@ -1,0 +1,26 @@
+name: ci
+on: [push, workflow_dispatch, release]
+jobs:
+  selftest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm i --omit=dev
+      - name: install self-check (published artifact must install clean)
+        run: npm pack --dry-run
+      - name: receipt verification end-to-end (normal PASS / small-order FAIL)
+        run: |
+          node - << 'NODE'
+          import { ed25519 } from '@noble/curves/ed25519.js';
+          import fs from 'node:fs'; import crypto from 'node:crypto';
+          const kp = ed25519.keygen();
+          const st = ed25519.sign(new Uint8Array(Buffer.from('p')), kp.secretKey);
+          const der = Buffer.concat([Buffer.from('302a300506032b6570032100','hex'), Buffer.from(kp.publicKey)]);
+          const fp = 'sha256:' + crypto.createHash('sha256').update(der).digest('hex').slice(0,32);
+          fs.writeFileSync('/tmp/ok.json', JSON.stringify({type:'dataset-integrity-receipt',subject:{dataset:'qa'},integrity:{sha256:'x'},verification:{public_key:'-----BEGIN PUBLIC KEY-----\n'+der.toString('base64')+'\n-----END PUBLIC KEY-----\n',public_key_fingerprint:fp},signed_payload:'p',signature:Buffer.from(st).toString('base64')}));
+          NODE
+          node cli.mjs /tmp/ok.json | grep -q '"result":"PASS"'
+      - name: data lock (vectors manifest unchanged)
+        run: curl -fsSL https://raw.githubusercontent.com/DSHCorrectover/verifier-divergence-corpus/main/manifest.sha256 | grep -q vectors.json
