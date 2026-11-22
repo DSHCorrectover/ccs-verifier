@@ -17,3 +17,20 @@ Zero runtime dependencies. Node ≥ 18.
 
 Python version: `pip install ccs-verifier` (same spec, cross-verified).
 Receipts: https://entropy.correctover.com · Spec: draft-correctover-ccs (IETF individual submission, no IETF endorsement)
+
+## Meta-Verification (L2) — v1.7
+
+"Verification of the verification": if a receipt declares a `meta_verification`
+object, the verifier enforces four checks and gates the overall result on them
+(receipts without the field keep prior semantics):
+
+1. **judge_diversity** — `judges[]` has >= 2 distinct independent implementations
+2. **claim_double_lock** — sha256(claim_text)[:16] equals `claim_digest` (prevents claim substitution)
+3. **idempotent_replay** — `replay_digest` equals `claim_digest` (determinism attestation)
+4. **min_dependency_surface** — `deps[]` and `axioms[]` declared
+
+Any failed check -> overall FAIL with `meta_verification` details in `detail`.
+Method origin: the discipline used to verify the Claude-assisted Riemann
+hypothesis proof (multiple independent checkers, claim-text comparison,
+idempotent recompilation, minimal axiom surface), productized as a receipt
+signing precondition. See `verifier-divergence-corpus/meta-verification/`.

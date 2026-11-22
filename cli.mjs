@@ -9,8 +9,33 @@ function spkiRaw(pem) {
   const b64 = pem.split(/\r?\n/).filter(l => l && !l.includes('-----')).join('');
   return Buffer.from(b64, 'base64');
 }
+// v1.7: meta-verification (L2) — "verification of the verification".
+// If receipt declares `meta_verification`, all four checks must PASS for overall PASS:
+//   1) judge diversity: >=2 distinct independent implementations
+//   2) claim double-lock: sha256(claim_text)[:16] === claim_digest (prevents claim substitution)
+//   3) idempotent replay: replay_digest === claim_digest (determinism attestation; external re-run is the proof, consistency checked here)
+//   4) minimal dependency surface: deps + axioms declared (non-empty)
+// Receipts without the field keep v1.6 semantics (backward compatible).
+function metaVerificationCheck(j, sha256hex) {
+  const mv = j.meta_verification;
+  if (!mv) return { performed: false };
+  const checks = {};
+  checks.judge_diversity = Array.isArray(mv.judges) && mv.judges.length >= 2
+    && new Set(mv.judges.map(x => x && x.impl)).size === mv.judges.length;
+  checks.claim_double_lock = typeof mv.claim_text === 'string' && mv.claim_text.length > 0
+    && typeof mv.claim_digest === 'string'
+    && ('sha256:' + sha256hex(mv.claim_text).slice(0, 16)) === mv.claim_digest;
+  checks.idempotent_replay = typeof mv.replay_digest === 'string'
+    && mv.replay_digest === mv.claim_digest;
+  checks.min_dependency_surface = Array.isArray(mv.deps) && mv.deps.length > 0
+    && Array.isArray(mv.axioms) && mv.axioms.length > 0;
+  const pass = Object.values(checks).every(Boolean);
+  return { performed: true, pass, checks };
+}
+
 function verifyReceiptFile(path) {
   const r = { file: path.split('/').pop(), result: 'ERROR', detail: null };
+  const sha256hex = (s) => crypto.createHash('sha256').update(s).digest('hex');
   try {
     const j = JSON.parse(fs.readFileSync(path, 'utf8'));
     const pubPem = j.verification.public_key;
@@ -39,6 +64,12 @@ function verifyReceiptFile(path) {
     r.result = okProp && okSig && okFp && okF ? 'PASS' : 'FAIL';
     if (r.result === 'FAIL') r.detail = { key_property: prop, signature: okSig, fingerprint: okFp, fields: okF };
     r.type = t;
+    // v1.7 L2: meta-verification, only gates overall result when declared
+    const mv = metaVerificationCheck(j, sha256hex);
+    if (mv.performed) {
+      r.meta_verification = { pass: mv.pass, checks: mv.checks };
+      if (!mv.pass) { r.result = 'FAIL'; r.detail = Object.assign(r.detail || {}, { meta_verification: mv.checks }); }
+    }
   } catch (e) { r.detail = String(e.message).slice(0, 80); }
   return r;
 }
