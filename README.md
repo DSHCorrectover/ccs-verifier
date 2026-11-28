@@ -1,4 +1,6 @@
 # ccs-verifier
+> 🛡️ Part of [Correctover Agent Audit Hub](https://github.com/DSHCorrectover/agent-audit-hub) — open an [Audit Request](https://github.com/DSHCorrectover/agent-audit-hub/issues/new?template=audit-request.yml) or [Data Request](https://github.com/DSHCorrectover/agent-audit-hub/issues/new?template=data-request.yml).
+
 
 > **v1.6 security note**: receipt-signing keys are now subgroup-property-checked (8P=I test via @noble/curves) *before* signature verification — defends against vacuous-cofactored-equation forgeries on small-order keys and OpenSSL-build variance. Evidence: [verifier-divergence-corpus](https://github.com/DSHCorrectover/verifier-divergence-corpus) `poc-vacuity.mjs` (3/3 zero-secret forgeries accepted on zip215 path, strict rejects all). (npm CLI)
 
